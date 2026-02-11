@@ -23,7 +23,7 @@ public class LoginTest extends BaseTest {
         loginPage.login("bad_user", "bad_pass");
 
         Assert.assertTrue(
-                loginPage.getErrorMessage().toLowerCase().contains("do not match"),
+                loginPage.getErrorMessageText().toLowerCase().contains("do not match"),
                 "Proper error message should be shown"
         );
     }

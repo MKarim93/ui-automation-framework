@@ -9,27 +9,49 @@ public class LoginPage {
 
     private final WebDriver driver;
 
-    private final By username = By.id("user-name");
-    private final By password = By.id("password");
+    // Locators
+    private final By usernameInput = By.id("user-name");
+    private final By passwordInput = By.id("password");
     private final By loginButton = By.id("login-button");
     private final By errorMessage = By.cssSelector("[data-test='error']");
+    private final By pageTitle = By.cssSelector(".login_logo");
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
+        // Wait until login page is ready
+        WaitUtils.wait(driver).until(ExpectedConditions.visibilityOfElementLocated(pageTitle));
     }
 
-    public void login(String user, String pass) {
-        WaitUtils.wait(driver)
-                .until(ExpectedConditions.visibilityOfElementLocated(username))
-                .sendKeys(user);
+    // ---------- Actions ----------
+    public void enterUsername(String username) {
+        driver.findElement(usernameInput).clear();
+        driver.findElement(usernameInput).sendKeys(username);
+    }
 
-        driver.findElement(password).sendKeys(pass);
+    public void enterPassword(String password) {
+        driver.findElement(passwordInput).clear();
+        driver.findElement(passwordInput).sendKeys(password);
+    }
+
+    public void clickLogin() {
         driver.findElement(loginButton).click();
     }
 
-    public String getErrorMessage() {
+    public void login(String username, String password) {
+        enterUsername(username);
+        enterPassword(password);
+        clickLogin();
+    }
+
+    // ---------- Assertions / State ----------
+    public boolean isErrorDisplayed() {
+        return !driver.findElements(errorMessage).isEmpty();
+    }
+
+    public String getErrorMessageText() {
         return WaitUtils.wait(driver)
                 .until(ExpectedConditions.visibilityOfElementLocated(errorMessage))
-                .getText();
+                .getText()
+                .trim();
     }
 }
